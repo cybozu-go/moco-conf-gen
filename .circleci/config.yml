@@ -8,9 +8,37 @@ jobs:
     steps:
     - checkout
     - run: make test
+  image:
+    docker:
+      - image: docker:stable
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: cp -a /tmp/workspace build
+      - setup_remote_docker
+      - run: docker build . -t quay.io/cybozu/moco-conf-gen:latest
+      - run:
+          name: Push docker image to Quay.io
+          command: |
+            if [ "$CIRCLE_TAG" = "" ]; then exit 0; fi
+            docker login -u $QUAY_USER -p $QUAY_PASSWORD quay.io
+            echo "pushing image ..."
+            TAG=$(echo $CIRCLE_TAG | cut -c 2-)
+            docker tag quay.io/cybozu/moco-conf-gen:latest quay.io/cybozu/moco-conf-gen:$TAG
+            docker push quay.io/cybozu/moco-conf-gen:$TAG
 
 workflows:
   version: 2
   main:
     jobs:
-      - build
+      - build:
+          filters:
+            tags:
+              only: /^v.*/
+      - image:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/

@@ -1,7 +1,7 @@
 Release procedure
 =================
 
-This document describes how to release a new version of neco-template.
+This document describes how to release a new version of moco-conf-gen.
 
 Versioning
 ----------
@@ -51,12 +51,12 @@ Bump version
     $ git tag "v$VERSION"
     $ git push origin "v$VERSION"
 
-Now the version is bumped up and the latest container image is uploaded to [quay.io](https://quay.io/cybozu/neco-template).
+Now the version is bumped up and the latest container image is uploaded to [quay.io](https://quay.io/cybozu/moco-conf-gen).
 
 Publish GitHub release page
 ---------------------------
 
-Go to https://github.com/cybozu-go/neco-template/releases and edit the tag.
+Go to https://github.com/cybozu-go/moco-conf-gen/releases and edit the tag.
 Finally, press `Publish release` button.
 
 
