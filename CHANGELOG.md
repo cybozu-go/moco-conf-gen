@@ -5,8 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Added
-### Changed
-### Removed
+## [0.1.0] - 2020-06-23
 
-[Unreleased]: https://github.com/cybozu-go/coil/compare/4b825dc642cb6eb9a060e54bf8d69288fbee4904...HEAD
+### Added
+
+- Add prototype of moco-conf-gen (#1).
+
+[Unreleased]: https://github.com/cybozu-go/moco-conf-gen/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/cybozu-go/moco-conf-gen/compare/6462f624ff8737d2b2a5e9413bf2af0107aa931f...v0.1.0
