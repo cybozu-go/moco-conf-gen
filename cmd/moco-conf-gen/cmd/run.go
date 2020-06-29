@@ -1,69 +1,55 @@
 package cmd
 
 import (
-	"context"
 	"errors"
-	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"text/template"
 
 	"github.com/cybozu-go/moco"
 )
 
-var mycnf = `
-[mysqld]
-datadir         = /var/lib/mysql
-pid-file        = /var/run/mysqld/mysqld.pid
-socket          = /var/run/mysqld/mysqld.sock
-secure-file-priv= NULL
-
-# Disabling symbolic-links to prevent assorted security risks
-symbolic-links=0
-`
-
 func subMain() error {
-	// log.Info("create config file for admin interface", nil)
-	// err = confAdminInterface(ctx, viper.GetString(moco.PodIPFlag))
-	// if err != nil {
-	// 	return err
-	// }
+	serverID, err := confServerID(os.Getenv(moco.PodNameEnvName))
+	if err != nil {
+		return err
+	}
+	parameters := moco.MyConfTemplateParameters{ServerID: serverID, AdminAddress: os.Getenv(moco.PodIPEnvName)}
 
-	// log.Info("create config file for server-id", nil)
-	// err = confServerID(ctx, viper.GetString(moco.PodNameFlag))
-	// if err != nil {
-	// 	return err
-	// }
+	tmpl, err := template.ParseFiles(filepath.Join(moco.MySQLConfTemplatePath, moco.MySQLConfName))
+	if err != nil {
+		return err
+	}
 
-	return ioutil.WriteFile(filepath.Join(moco.MySQLConfPath, moco.MySQLConfName), []byte(mycnf), 0644)
+	file, err := os.Create(filepath.Join(moco.MySQLConfPath, moco.MySQLConfName))
+	if err != nil {
+		return nil
+	}
+	defer file.Close()
+
+	err = tmpl.Execute(file, parameters)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func confAdminInterface(ctx context.Context, podIP string) error {
-	conf := `
-[mysqld]
-admin-address=%s
-`
-	return ioutil.WriteFile(filepath.Join(moco.MySQLConfPath, "admin-interface.cnf"), []byte(fmt.Sprintf(conf, podIP)), 0400)
-}
-
-func confServerID(ctx context.Context, podNameWithOrdinal string) error {
+func confServerID(podNameWithOrdinal string) (uint, error) {
 	// ordinal should be increased by 1000 because the case server-id is 0 is not suitable for the replication purpose
 	const ordinalOffset = 1000
 
 	s := strings.Split(podNameWithOrdinal, "-")
 	if len(s) < 2 {
-		return errors.New("podName should contain an ordinal with dash, like 'podname-0', at the end: " + podNameWithOrdinal)
+		return 0, errors.New("podName should contain an ordinal with dash, like 'podname-0', at the end: " + podNameWithOrdinal)
 	}
 
-	ordinal, err := strconv.Atoi(s[len(s)-1])
+	ordinal, err := strconv.ParseUint(s[len(s)-1], 10, 32)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	conf := `
-[mysqld]
-server-id=%d
-`
-	return ioutil.WriteFile(filepath.Join(moco.MySQLConfPath, "server-id.cnf"), []byte(fmt.Sprintf(conf, ordinal+ordinalOffset)), 0400)
+	return uint(ordinal + ordinalOffset), nil
 }
