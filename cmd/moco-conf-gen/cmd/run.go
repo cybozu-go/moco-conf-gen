@@ -7,25 +7,48 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
-
-	"github.com/cybozu-go/moco"
 )
 
+const (
+	// PodNameEnvName is a name of the environment variable of a pod name.
+	PodNameEnvName = "POD_NAME"
+
+	// PodIPEnvName is a name of the environment variable of a pod IP.
+	PodIPEnvName = "POD_IP"
+
+	// MySQLConfTemplatePath is
+	MySQLConfTemplatePath = "/etc/mysql_template"
+
+	// MySQLConfName is a filename for MySQL conf.
+	MySQLConfName = "my.cnf"
+
+	// MySQLConfPath is a path for MySQL conf dir.
+	MySQLConfPath = "/etc/mysql"
+)
+
+// MyConfTemplateParameters define parameters for a MySQL configuration template
+type MyConfTemplateParameters struct {
+	// ServerID is the value for server_id of MySQL configuration
+	ServerID uint
+	// AdminAddress is the value for admin_address of MySQL configuration
+	AdminAddress string
+}
+
 func subMain() error {
-	serverID, err := confServerID(os.Getenv(moco.PodNameEnvName))
+	serverID, err := confServerID(os.Getenv(PodNameEnvName))
 	if err != nil {
 		return err
 	}
-	parameters := moco.MyConfTemplateParameters{ServerID: serverID, AdminAddress: os.Getenv(moco.PodIPEnvName)}
+	parameters := MyConfTemplateParameters{ServerID: serverID, AdminAddress: os.Getenv(PodIPEnvName)}
 
-	tmpl, err := template.ParseFiles(filepath.Join(moco.MySQLConfTemplatePath, moco.MySQLConfName))
+	tmpl, err := template.ParseFiles(filepath.Join(MySQLConfTemplatePath, MySQLConfName))
 	if err != nil {
 		return err
 	}
 
-	file, err := os.Create(filepath.Join(moco.MySQLConfPath, moco.MySQLConfName))
+	file, err := os.Create(filepath.Join(MySQLConfPath, MySQLConfName))
 	if err != nil {
-		return nil
+		return err
 	}
 	defer file.Close()
 
