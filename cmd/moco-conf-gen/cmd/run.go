@@ -13,9 +13,6 @@ const (
 	// PodNameEnvName is a name of the environment variable of a pod name.
 	PodNameEnvName = "POD_NAME"
 
-	// PodIPEnvName is a name of the environment variable of a pod IP.
-	PodIPEnvName = "POD_IP"
-
 	// MySQLConfTemplatePath is
 	MySQLConfTemplatePath = "/etc/mysql_template"
 
@@ -39,7 +36,7 @@ func subMain() error {
 	if err != nil {
 		return err
 	}
-	parameters := MyConfTemplateParameters{ServerID: serverID, AdminAddress: os.Getenv(PodIPEnvName)}
+	parameters := MyConfTemplateParameters{ServerID: serverID, AdminAddress: os.Getenv(PodNameEnvName)}
 
 	tmpl, err := template.ParseFiles(filepath.Join(MySQLConfTemplatePath, MySQLConfName))
 	if err != nil {
