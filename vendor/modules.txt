@@ -1,7 +1,5 @@
 # github.com/cybozu-go/log v1.6.0
 github.com/cybozu-go/log
-# github.com/cybozu-go/moco v0.1.1
-github.com/cybozu-go/moco
 # github.com/cybozu-go/netutil v1.2.0
 github.com/cybozu-go/netutil
 # github.com/cybozu-go/well v1.10.0
