@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	serverIDOffsetFlag = "server-id-offset"
+	serverIDBaseFlag = "server-id-base"
 )
 
-var serverIDOffset uint32
+var serverIDBase uint32
 
 var (
 	rootCmd = &cobra.Command{
@@ -29,7 +29,7 @@ var (
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			serverIDOffset = viper.GetUint32(serverIDOffsetFlag)
+			serverIDBase = viper.GetUint32(serverIDBaseFlag)
 			return subMain()
 		},
 	}
@@ -37,7 +37,7 @@ var (
 
 func init() {
 	// ordinal should be increased by 1000 as default because the case server-id is 0 is not suitable for the replication purpose
-	rootCmd.Flags().Uint32(serverIDOffsetFlag, 1000, "Offset value of server-id.")
+	rootCmd.Flags().Uint32(serverIDBaseFlag, 1000, "Base value of server-id.")
 	err := viper.BindPFlags(rootCmd.Flags())
 	if err != nil {
 		panic(err)

@@ -68,5 +68,5 @@ func confServerID(podNameWithOrdinal string) (uint32, error) {
 		return 0, err
 	}
 
-	return uint32(ordinal) + serverIDOffset, nil
+	return uint32(ordinal) + serverIDBase, nil
 }
