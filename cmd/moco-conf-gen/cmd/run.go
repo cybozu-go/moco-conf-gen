@@ -26,7 +26,7 @@ const (
 // MyConfTemplateParameters define parameters for a MySQL configuration template
 type MyConfTemplateParameters struct {
 	// ServerID is the value for server_id of MySQL configuration
-	ServerID uint
+	ServerID uint32
 	// AdminAddress is the value for admin_address of MySQL configuration
 	AdminAddress string
 }
@@ -57,10 +57,7 @@ func subMain() error {
 	return nil
 }
 
-func confServerID(podNameWithOrdinal string) (uint, error) {
-	// ordinal should be increased by 1000 because the case server-id is 0 is not suitable for the replication purpose
-	const ordinalOffset = 1000
-
+func confServerID(podNameWithOrdinal string) (uint32, error) {
 	s := strings.Split(podNameWithOrdinal, "-")
 	if len(s) < 2 {
 		return 0, errors.New("podName should contain an ordinal with dash, like 'podname-0', at the end: " + podNameWithOrdinal)
@@ -71,5 +68,5 @@ func confServerID(podNameWithOrdinal string) (uint, error) {
 		return 0, err
 	}
 
-	return uint(ordinal + ordinalOffset), nil
+	return uint32(ordinal) + serverIDBase, nil
 }
