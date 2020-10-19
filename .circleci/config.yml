@@ -17,9 +17,6 @@ jobs:
           command: |
             apk add --no-cache git
       - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - run: cp -a /tmp/workspace build
       - setup_remote_docker
       - run: docker build . -t quay.io/cybozu/moco-conf-gen:latest
       - run:
