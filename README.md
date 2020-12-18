@@ -12,7 +12,7 @@ Documentation
 -------------
 
 This repository provides MySQL configuration generator for [MOCO].
-See [docs of MOCO](https://github.com/cybozu-go/moco/docs) for detail.
+See [docs of MOCO](https://github.com/cybozu-go/moco/tree/master/docs) for detail.
 
 Docker images
 -------------
